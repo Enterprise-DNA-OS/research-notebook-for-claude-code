@@ -1,43 +1,70 @@
 # Research Notebook for Claude Code: operating instructions
 
-This file is the brain. Claude Code reads it at the start of every session. It says who this is for, how work gets done, and the one right way to do each recurring job.
+This system is for a trusted operator managing non-clinical research records. Read the README and `docs/compliance.md` before changing records. Do not use it for patient data, regulated submissions or instrument control.
 
-## Who this is for
+## Rules
 
-- **Business:** [YOUR BUSINESS]
-- **Operator:** [YOUR NAME], [your role]
-- **What matters most:** [the one or two outcomes you care about]
+- Read the affected record before writing. Never invent an observation, result, owner, signature or approval.
+- Resolve ambiguous names before writing; the CLI lists candidates and exits with failure.
+- One CLI: `node scripts/notebook.mjs`. `--json` is the machine interface. Read `docs/cli.md` for fields.
+- Every change requires a declared `--actor`. It is an audit label, not identity verification.
+- Preserve originals. Corrections append; protocol changes create a version or a documented link change.
+- Review names must represent a real person's review. A label alone is not a regulated signature.
+- Never send, publish, delete, share records or change access controls without explicit authorization.
+- Drafts stay in `drafts/`. Generated reports stay local and read-only.
+- Do not run seed on a real notebook. Back up the database and referenced files together.
+- Every new field or rule uses the next numbered migration; never rewrite an applied migration.
 
-Fill this in once. A worker with context knows. A worker without it guesses.
+## Routing
 
-## How to work
-
-1. **Take a brief, not a script.** The operator describes the outcome. You run the right command and present the answer.
-2. **Read before you write.** Before drafting anything about a record, read its full history first.
-3. **Plain language.** Short sentences. No filler. Numbers in tables.
-4. **Silent success, loud problems.** No play-by-play. Say what broke and what you did about it.
-5. **Stop at the line.** Anything that sends, deletes, or faces a customer waits for a yes in this session.
-
-## Routing table: one right way for each recurring job
-
-| When the operator asks for... | Use this |
+| Ask | Workflow |
 |---|---|
-| <!-- TODO(author): one row per slash command --> | `/...` |
+| Review project custody and retention decisions | `/projects` |
+| Find the exact protocol version | `/protocols` |
+| Read the experiment register | `/experiments` |
+| Plan the research week | `/experiment-week` |
+| Find experiments waiting for independent review | `/review-queue` |
+| Find experiments missing observations or raw evidence | `/evidence-gaps` |
+| Find active work using retired protocols | `/protocol-review` |
+| Review research follow-up actions | `/actions` |
+| Read overdue work and unresolved archive reconciliation | `/attention` |
+| Check documented research record controls | `/compliance` |
+| Read imported notebook inventories | `/archives` |
+| Find missing local links in notebook exports | `/archive-gaps` |
+| Review custody, retention and backup evidence | `/retention-review` |
+| Compare active work and overdue items by researcher | `/owner-workload` |
+| Read the recorded change history | `/audit` |
+| Answer ten cross-record research questions | `/insights` |
+| Create a research project | `/add-project` |
+| Record the owner-approved retention and backup decision | `/set-retention` |
+| Add an immutable protocol version | `/add-protocol` |
+| Retire a protocol without erasing it | `/retire-protocol` |
+| Plan an experiment against an exact protocol version | `/add-experiment` |
+| Append an observation, result or deviation | `/log` |
+| Correct an entry while retaining the original | `/correct` |
+| Record a retained file location and calculate its hash | `/attach` |
+| Assign an experiment follow-up | `/add-action` |
+| Record an action resolution | `/resolve-action` |
+| Submit work for independent review | `/submit` |
+| Record a human review decision | `/review` |
+| Close an accepted experiment | `/close` |
+| Reopen work and invalidate its prior acceptance | `/reopen` |
+| Record a protocol change with the previous version retained | `/change-protocol` |
+| Record a person's archive reconciliation | `/reconcile-archive` |
+| Read the complete experiment history | `/experiment` |
+| Search notebook entries and archived page text | `/search` |
+| Recheck retained evidence files against recorded hashes | `/verify-evidence` |
+| Recheck every stored archive file and manifest | `/verify-archive` |
+| Export all records and retained archive bytes | `/export` |
+| Draft an experiment handover locally | `/draft-handover` |
+| import | `/import` |
+| weekly-review | `/weekly-review` |
+| draft-weekly-review | `/draft-weekly-review` |
+| documents | `/documents` |
+| views | `/views` |
+| Add fields or change rules | `/customise` |
+| Add a read-only dashboard | `/new-view` |
 
-If an ask fits nothing here, run the CLI directly (`npm run <cli> -- --help`) and then propose a new command for it.
+All coding agents use `.claude/commands/`. `AGENTS.md` points here. Tests and demo use temporary local databases. Any safety or compliance gap is a record to investigate, not proof of misconduct or legal non-compliance.
 
-## Hard rules
-
-- Never send email or messages from here. Draft to `drafts/`, a person sends.
-- Never delete records without an explicit yes in this session. Prefer marking closed or archived.
-- Never invent a record. If a name is ambiguous, list the candidates and ask.
-- The database is the source of truth. If the answer is not in it, say so.
-
-## Where things live
-
-- `scripts/` the CLI. `scripts/lib/db.mjs` picks `DATABASE_URL` (Postgres, Supabase) or the embedded database in `.data/`.
-- `supabase/migrations/` the schema, plain SQL. `npm run migrate` applies it.
-- `.claude/commands/` the slash commands. Add one every time the same ask comes twice.
-- `docs/` the thesis and the guide for moving off LabArchives.
-
-Built by Enterprise DNA. Installed and run for you as part of Omni: https://enterprisedna.co/omni/instead-of/labarchives
+Built and run for businesses through Omni by Enterprise DNA.

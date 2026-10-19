@@ -1,11 +1,67 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "name": "experiment-record",
+    "title": "Experiment record",
+    "for_each": "select id,code from experiments order by code",
+    "file": "code",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Experiment",
+        "sql": "select code,title,owner,hypothesis,state,conclusion,due_on from experiments where id=$1"
+      },
+      {
+        "title": "Protocol version",
+        "sql": "select p.code,p.version,p.title,p.body from protocols p join experiments e on e.protocol_id=p.id where e.id=$1"
+      },
+      {
+        "title": "Observations and corrections",
+        "sql": "select kind,body,observed_on,author,supersedes from entries where experiment_id=$1 order by created_at,id"
+      },
+      {
+        "title": "Raw evidence references",
+        "sql": "select label,location,sha256,captured_on from artifacts where experiment_id=$1 order by label"
+      },
+      {
+        "title": "Independent review record",
+        "note": "Declared names are not verified identities or regulated electronic signatures.",
+        "sql": "select reviewer,decision,revision,evidence_ref,created_at from reviews where experiment_id=$1 order by created_at,id"
+      }
+    ]
+  },
+  {
+    "name": "project-handover",
+    "title": "Project handover record",
+    "for_each": "select id,code from projects order by code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Custody and retention",
+        "sql": "select code,name,owner,jurisdiction,storage_ref,policy_ref,retain_until,backup_verified_on from projects where id=$1"
+      },
+      {
+        "title": "Experiment register",
+        "sql": "select code,title,owner,state,due_on from experiments where project_id=$1 order by code"
+      },
+      {
+        "title": "Outstanding actions",
+        "sql": "select a.code,a.description,a.owner,a.due_on from actions a join experiments e on e.id=a.experiment_id where e.project_id=$1 and a.resolved_on is null order by a.due_on,a.code"
+      }
+    ]
+  },
+  {
+    "name": "archive-reconciliation",
+    "title": "Archive reconciliation record",
+    "for_each": "select id,code from archives order by code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Import and acknowledgement",
+        "sql": "select code,source_system,manifest_hash,imported_by,acknowledged_by,reconciliation_ref from archives where id=$1"
+      },
+      {
+        "title": "File manifest",
+        "sql": "select relative_path,sha256,bytes,missing_links from archive_files where archive_id=$1 order by relative_path"
+      }
     ]
   }
 ]

@@ -1,0 +1,20 @@
+[
+  {
+    "label": "Professional Corporate",
+    "amount": 575,
+    "currency": "USD",
+    "per": "user/year",
+    "source": "https://www.labarchives.com/pricing",
+    "checked": "2026-10-19",
+    "quote": "$575 Corporate per user per year"
+  },
+  {
+    "label": "ELN + Inventory Corporate",
+    "amount": 675,
+    "currency": "USD",
+    "per": "user/year",
+    "source": "https://www.labarchives.com/pricing",
+    "checked": "2026-10-19",
+    "quote": "$675 Corporate per user per year"
+  }
+]

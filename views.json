@@ -1,13 +1,44 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "Research Notebook for Claude Code: what needs attention, rendered by npm run view",
+    "title": "Research week",
+    "subtitle": "Read-only research operations. Fictional when seeded.",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "Attention",
+        "sql": "select * from research_attention order by due_date,code"
+      },
+      {
+        "title": "Experiments",
+        "sql": "select code,title,owner,state,due_on,current_review from experiment_position order by due_on,code"
+      }
+    ]
+  },
+  {
+    "name": "evidence",
+    "title": "Research evidence",
+    "sections": [
+      {
+        "title": "Evidence position",
+        "sql": "select code,protocol,entries,artifacts,open_actions,current_review from experiment_position order by code"
+      },
+      {
+        "title": "Record checks",
+        "sql": "select * from research_compliance order by code,rule"
+      }
+    ]
+  },
+  {
+    "name": "archives",
+    "title": "Notebook archives",
+    "sections": [
+      {
+        "title": "Archive inventory",
+        "sql": "select a.code,f.relative_path,f.bytes,f.title,f.missing_links from archives a join archive_files f on f.archive_id=a.id order by a.code,f.relative_path"
+      },
+      {
+        "title": "Retention decisions",
+        "sql": "select code,owner,storage_ref,policy_ref,retain_until,backup_verified_on from projects order by code"
       }
     ]
   }
