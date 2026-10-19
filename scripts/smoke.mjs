@@ -67,6 +67,8 @@ try{
  const modified=path.join(tmp,'modified');cpSync(source,modified,{recursive:true});writeFileSync(path.join(modified,'files/observations.txt'),'Different export');
  await rejects(['import','labarchives',modified,'--project=TEST','--code=IMPORT',actor],/Conflicting/);eq((await invoke(['archives'])).length,1);
  await rejects(['import','labarchives',source,'--project=TEST','--code=IMPORT','--dry-run=false',actor],/without a value/);
+ const unicode=path.join(tmp,'unicode');cpSync(source,unicode,{recursive:true});writeFileSync(path.join(unicode,'files/évidence.txt'),'Unicode evidence');await invoke(['import','labarchives',unicode,'--project=TEST','--code=UNICODE',actor]);eq((await invoke(['verify-archive','UNICODE'])).ok,true);
+
  await assert.rejects(()=>db.exec('update archive_files set bytes=0'),/append-only/);checks++;
  await invoke(['reconcile-archive','IMPORT','--evidence=Reconciled page count; missing image acknowledged',actor]);
  ok((await invoke(['compliance'])).some(x=>x.finding==='Export contains missing local links'),'Acknowledgement must not hide missing links');

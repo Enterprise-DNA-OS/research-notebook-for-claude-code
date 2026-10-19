@@ -97,6 +97,7 @@ export async function run(db,args){
  }
  if(cmd==='verify-archive'){
   noExtra(pos,2);keys(o);const a=await resolve(db,'archives',sub);const files=await db.query('select relative_path,sha256,bytes,content_base64 from archive_files where archive_id=$1 order by relative_path',[a.id]);
+  files.sort((a,b)=>a.relative_path<b.relative_path?-1:a.relative_path>b.relative_path?1:0);
   const failures=files.filter(f=>hash(Buffer.from(f.content_base64,'base64'))!==f.sha256||Buffer.from(f.content_base64,'base64').length!==Number(f.bytes)).map(f=>f.relative_path);
   const manifest=hash(JSON.stringify(files.map(f=>[f.relative_path,f.sha256,Number(f.bytes)])));
   return {archive:a.code,files:files.length,ok:!failures.length&&manifest===a.manifest_hash,failures,manifest_matches:manifest===a.manifest_hash};
